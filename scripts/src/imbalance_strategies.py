@@ -46,7 +46,7 @@ class Smote:
 
     # for each minority class samples,choose N of the k nearest neighbors and generate N synthetic samples.
     def _populate(self, N, i, nnarray):
-        for j in range(N):
+        for _ in range(N):
             nn = random.randint(0, self.k - 1)
             dif = self.samples[nnarray[nn]] - self.samples[i]
             gap = random.random()
@@ -56,10 +56,7 @@ class Smote:
 
 def get_smote_result(data_list, label, N):
     length = len(data_list)
-    postive_data = []
-    for i in range(0, length):
-        if label[i] == 1:
-            postive_data.append(data_list[i])
+    postive_data = [data_list[i] for i in range(length) if label[i] == 1]
     data_array = np.array(postive_data)
     smoke = Smote(data_array, N, 5)
     return smoke.over_sampling()
@@ -124,37 +121,31 @@ def get_ovs_smote_borderline_1(clf, data, label, m, s, k=5):
     T = np.array(data_list)
     n_samples, n_attrs = T.shape
 
-    # get p list
-    P = []
-    for i in range(0, length):
-        if label_local[i] == 1:
-            P.append(i)
-
+    P = [i for i in range(length) if label_local[i] == 1]
     n_samples = len(P)
     # calc m for all the positive sample
     neighbors = NearestNeighbors(n_neighbors=k).fit(T)
     synthetic = np.zeros((n_samples * m, n_attrs))
     newindex = 0
-    for i in range(len(P)):
-        nnarray = neighbors.kneighbors(T[P[i]].reshape(1, -1), return_distance=False)[0]
-        for j in range(m):
+    for item in P:
+        nnarray = neighbors.kneighbors(
+            T[item].reshape(1, -1), return_distance=False
+        )[0]
+        for _ in range(m):
             nn = random.randint(0, k - 1)
-            dif = T[nnarray[nn]] - T[P[i]]
+            dif = T[nnarray[nn]] - T[item]
             gap = random.random()
-            synthetic[newindex] = T[P[i]] + gap * dif
+            synthetic[newindex] = T[item] + gap * dif
             newindex += 1
 
-    pred = []
     danger = []
     noise = []
-    for i in range(0, n_samples * m):
-        pred.append(clf.predict(synthetic[i].reshape(1, -1)))
-
-    for i in range(0, len(pred)):
+    pred = [clf.predict(synthetic[i].reshape(1, -1)) for i in range(n_samples * m)]
+    for i in range(len(pred)):
         if i % 5 != 0:
             continue
         count = 0
-        for j in range(0, 5):
+        for j in range(5):
             if i + j >= len(pred) - 1:
                 continue
             if pred[i + j] == 0:
@@ -168,32 +159,24 @@ def get_ovs_smote_borderline_1(clf, data, label, m, s, k=5):
 
 
     n_samples_danger = len(danger)
-    # calc m for all the positive sample
-    danger_list = []
-    for i in danger:
-        danger_list.append(T[i])
-
+    danger_list = [T[i] for i in danger]
     if not danger_list:
-        result = []
-        result.append(data_list)
-        result.append(label)
-        return result
+        return [data_list, label]
     neighbors = NearestNeighbors(n_neighbors=k).fit(danger_list)
     synthetic_danger = np.zeros((n_samples_danger * s, n_attrs), dtype=float)
     newindex_danger = 0
-    for i in range(len(danger)):
-        if 5 > len(danger):
-            result = []
-            result.append(data_list)
-            result.append(label)
-            return result
-        nnarray = neighbors.kneighbors(T[danger[i]].reshape(1, -1), return_distance=False)[0]
+    for item_ in danger:
+        if len(danger) < 5:
+            return [data_list, label]
+        nnarray = neighbors.kneighbors(
+            T[item_].reshape(1, -1), return_distance=False
+        )[0]
 
-        for j in range(m):
+        for _ in range(m):
             nn = random.randint(0, k - 1)
-            dif = T[nnarray[nn]] - T[danger[i]]
+            dif = T[nnarray[nn]] - T[item_]
             gap = random.random()
-            synthetic_danger[newindex_danger] = T[danger[i]] + gap * dif
+            synthetic_danger[newindex_danger] = T[item_] + gap * dif
             newindex_danger += 1
 
     synthetic_danger_list = synthetic_danger.tolist()
@@ -201,23 +184,19 @@ def get_ovs_smote_borderline_1(clf, data, label, m, s, k=5):
     noise.reverse()
 
     # 删除noise
-    for i in range(0,len(noise)):
+    for i in range(len(noise)):
         del data_list[noise[i]]
         del label_local[noise[i]]
 
-    # 添加正项
-    random_list = []
-    for i in range(0, len(synthetic_danger_list)):
-        random_list.append(int(random.random() * len(data_list)))
-
-    for i in range(0, len(random_list)):
+    random_list = [
+        int(random.random() * len(data_list))
+        for _ in range(len(synthetic_danger_list))
+    ]
+    for i in range(len(random_list)):
         data_list.insert(random_list[i], synthetic_danger_list[i])
         label_local.insert(random_list[i], 1)
 
-    result = []
-    result.append(data_list)
-    result.append(label_local)
-    return result
+    return [data_list, label_local]
 
 # ensemble method
 def get_ens_BalanceCascade(data_list, label):

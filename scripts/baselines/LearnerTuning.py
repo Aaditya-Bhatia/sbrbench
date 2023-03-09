@@ -71,7 +71,9 @@ def prediction(train_dataset_path, test_dataset_path):
                            np.int(np.round(parameter[3])), parameter[4], np.int(np.round(parameter[5])))
         rf_predictions = rf.predict(test_x)
         result_statistics(test_y, rf_predictions)
-        print("--- Random Forest Tuning Time: %s seconds ---" % (time.time() - rf_tuning_start_time))
+        print(
+            f"--- Random Forest Tuning Time: {time.time() - rf_tuning_start_time} seconds ---"
+        )
         print("")
     elif best_learner == "NB":
         print("----------Tuning Naive Bayes with DE----------")
@@ -84,7 +86,9 @@ def prediction(train_dataset_path, test_dataset_path):
         nb = naive_bayes(train_x, train_y, parameter[0])
         nb_predictions = nb.predict(test_x)
         result_statistics(test_y, nb_predictions)
-        print("--- Naive Bayes Tuning Time: %s seconds ---" % (time.time() - nb_tuning_start_time))
+        print(
+            f"--- Naive Bayes Tuning Time: {time.time() - nb_tuning_start_time} seconds ---"
+        )
         print("")
     elif best_learner == "MLP":
         print("----------Tuning Multilayer Perceptron with DE----------")
@@ -100,7 +104,9 @@ def prediction(train_dataset_path, test_dataset_path):
                                      parameter[4], np.int(np.round(parameter[5])))
         mlpn_predictions = mlpn.predict(test_x)
         result_statistics(test_y, mlpn_predictions)
-        print("--- Multilayer Percepptron Tuning Time: %s seconds ---" % (time.time() - mlpn_tuning_start_time))
+        print(
+            f"--- Multilayer Percepptron Tuning Time: {time.time() - mlpn_tuning_start_time} seconds ---"
+        )
         print("")
     elif best_learner == "LR":
         print("----------Tuning Logistic Regression with DE----------")
@@ -113,7 +119,9 @@ def prediction(train_dataset_path, test_dataset_path):
         lr = logistic_regression(train_x, train_y, parameter[0], np.int(np.round(parameter[1])), parameter[2])
         lr_predictions = lr.predict(test_x)
         result_statistics(test_y, lr_predictions)
-        print("--- Logistic Regression Tuning Time: %s seconds ---" % (time.time() - lr_tuning_start_time))
+        print(
+            f"--- Logistic Regression Tuning Time: {time.time() - lr_tuning_start_time} seconds ---"
+        )
         print("")
     elif best_learner == "KNN":
         print("----------Tuning KNN with DE----------")
@@ -126,7 +134,9 @@ def prediction(train_dataset_path, test_dataset_path):
         knn = KNN(train_x, train_y, np.int(np.round(parameter[0])), np.int(np.round(parameter[1])))
         knn_predictions = knn.predict(test_x)
         result_statistics(test_y, knn_predictions)
-        print("--- KNN Tuning Time: %s seconds ---" % (time.time() - knn_tuning_start_time))
+        print(
+            f"--- KNN Tuning Time: {time.time() - knn_tuning_start_time} seconds ---"
+        )
         print("")
 
 

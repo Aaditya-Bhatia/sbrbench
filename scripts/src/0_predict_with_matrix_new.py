@@ -106,28 +106,26 @@ def prediction(train_path, test_path, writer):
 
 
 def main():
-    output = "../output_noise/noise_matrix_output.csv"     
-    csv_file = open(output, "w", newline='')
-    writer = csv.writer(csv_file, delimiter=',')
-    writer.writerow(['Dataname','Version', 'Approach', 'TN', 'FP', 'FN', 'TP', 'pd', 'pf', 'prec', 'fmeasure', 'Gmeasure','Cost']) 
+    output = "../output_noise/noise_matrix_output.csv"
+    with open(output, "w", newline='') as csv_file:
+        writer = csv.writer(csv_file, delimiter=',')
+        writer.writerow(['Dataname','Version', 'Approach', 'TN', 'FP', 'FN', 'TP', 'pd', 'pf', 'prec', 'fmeasure', 'Gmeasure','Cost']) 
 
-    datanames = ["ambari","camel", "derby", "wicket", "chromium"] #"ambari", "camel", "derby", "wicket", "chromium"
-    for dataname in datanames:
-        print("Start data: ", dataname)
-        TRAIN_n = r"../input/clean_matrix/" +dataname + "-train.csv"
-        TRAIN_f = r"../input/matrix/farsec/" +dataname + "-farsectwo.csv"
+        datanames = ["ambari","camel", "derby", "wicket", "chromium"] #"ambari", "camel", "derby", "wicket", "chromium"
+        for dataname in datanames:
+            print("Start data: ", dataname)
+            TRAIN_n = r"../input/clean_matrix/" +dataname + "-train.csv"
+            TRAIN_f = r"../input/matrix/farsec/" +dataname + "-farsectwo.csv"
 #        TRAIN_c = r"../input/clean_matrix/" +dataname + "-train.csv"
-        
+
 #        TEST_o = r"../input/clean_matrix/" +dataname + "-test.csv"
-        TEST_c = r"../input/matrix/clean/" +dataname + "-test.csv"
-        
+            TEST_c = r"../input/matrix/clean/" +dataname + "-test.csv"
+
 #        prediction(TRAIN_o,TEST_o, writer)
 #        print("")
-        prediction(TRAIN_f,TEST_c, writer)
-        print("")
-#        prediction(TRAIN_CLEAN, TEST_CLEAN, writer)
-    csv_file.close()
-    print(output + '**************** finished************************')
+            prediction(TRAIN_f,TEST_c, writer)
+            print("")
+    print(f'{output}**************** finished************************')
 
 if __name__ == "__main__":
     main()

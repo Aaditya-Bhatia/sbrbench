@@ -131,19 +131,9 @@ def rf_tuning(n_estimators, min_samples_leaf, min_samples_split, max_leaf_nodes,
     rf.fit(train_x, train_y)
     predictions = rf.predict(test_x)
     tn, fp, fn, tp = confusion_matrix(test_y, predictions).ravel()
-    if tp + fn == 0:
-        PD = 0.0
-    else:
-        PD = tp / (tp + fn)
-    if fp + tn == 0:
-        PF = 0.0
-    else:
-        PF = fp / (fp + tn)
-    if PD + 1 - PF == 0:
-        G_MEASURE = 0.0
-    else:
-        G_MEASURE = 2 * PD * (1 - PF) / (PD + 1 - PF)
-    return G_MEASURE
+    PD = 0.0 if tp + fn == 0 else tp / (tp + fn)
+    PF = 0.0 if fp + tn == 0 else fp / (fp + tn)
+    return 0.0 if PD + 1 - PF == 0 else 2 * PD * (1 - PF) / (PD + 1 - PF)
 
 
 def nb_tuning(var_smoothing):
@@ -151,19 +141,9 @@ def nb_tuning(var_smoothing):
     nb.fit(train_x, train_y)
     predictions = nb.predict(test_x)
     tn, fp, fn, tp = confusion_matrix(test_y, predictions).ravel()
-    if tp + fn == 0:
-        PD = 0.0
-    else:
-        PD = tp / (tp + fn)
-    if fp + tn == 0:
-        PF = 0.0
-    else:
-        PF = fp / (fp + tn)
-    if PD + 1 - PF == 0:
-        G_MEASURE = 0.0
-    else:
-        G_MEASURE = 2 * PD * (1 - PF) / (PD + 1 - PF)
-    return G_MEASURE
+    PD = 0.0 if tp + fn == 0 else tp / (tp + fn)
+    PF = 0.0 if fp + tn == 0 else fp / (fp + tn)
+    return 0.0 if PD + 1 - PF == 0 else 2 * PD * (1 - PF) / (PD + 1 - PF)
 
 
 def lr_tuning(c, max_iter, verbose):
@@ -171,19 +151,9 @@ def lr_tuning(c, max_iter, verbose):
     lr.fit(train_x, train_y)
     predictions = lr.predict(test_x)
     tn, fp, fn, tp = confusion_matrix(test_y, predictions).ravel()
-    if tp + fn == 0:
-        PD = 0.0
-    else:
-        PD = tp / (tp + fn)
-    if fp + tn == 0:
-        PF = 0.0
-    else:
-        PF = fp / (fp + tn)
-    if PD + 1 - PF == 0:
-        G_MEASURE = 0.0
-    else:
-        G_MEASURE = 2 * PD * (1 - PF) / (PD + 1 - PF)
-    return G_MEASURE
+    PD = 0.0 if tp + fn == 0 else tp / (tp + fn)
+    PF = 0.0 if fp + tn == 0 else fp / (fp + tn)
+    return 0.0 if PD + 1 - PF == 0 else 2 * PD * (1 - PF) / (PD + 1 - PF)
 
 
 def mlpn_tuning(alpha, learning_rate_init, power_t, max_iter, momentum, n_iter_no_change):
@@ -192,19 +162,9 @@ def mlpn_tuning(alpha, learning_rate_init, power_t, max_iter, momentum, n_iter_n
     mlpn.fit(train_x, train_y)
     predictions = mlpn.predict(test_x)
     tn, fp, fn, tp = confusion_matrix(test_y, predictions).ravel()
-    if tp + fn == 0:
-        PD = 0.0
-    else:
-        PD = tp / (tp + fn)
-    if fp + tn == 0:
-        PF = 0.0
-    else:
-        PF = fp / (fp + tn)
-    if PD + 1 - PF == 0:
-        G_MEASURE = 0.0
-    else:
-        G_MEASURE = 2 * PD * (1 - PF) / (PD + 1 - PF)
-    return G_MEASURE
+    PD = 0.0 if tp + fn == 0 else tp / (tp + fn)
+    PF = 0.0 if fp + tn == 0 else fp / (fp + tn)
+    return 0.0 if PD + 1 - PF == 0 else 2 * PD * (1 - PF) / (PD + 1 - PF)
 
 
 def knn_tuning(n_neighbors, leaf_size):
@@ -212,19 +172,9 @@ def knn_tuning(n_neighbors, leaf_size):
     knn.fit(train_x, train_y)
     predictions = knn.predict(test_x)
     tn, fp, fn, tp = confusion_matrix(test_y, predictions).ravel()
-    if tp + fn == 0:
-        PD = 0.0
-    else:
-        PD = tp / (tp + fn)
-    if fp + tn == 0:
-        PF = 0.0
-    else:
-        PF = fp / (fp + tn)
-    if PD + 1 - PF == 0:
-        G_MEASURE = 0.0
-    else:
-        G_MEASURE = 2 * PD * (1 - PF) / (PD + 1 - PF)
-    return G_MEASURE
+    PD = 0.0 if tp + fn == 0 else tp / (tp + fn)
+    PF = 0.0 if fp + tn == 0 else fp / (fp + tn)
+    return 0.0 if PD + 1 - PF == 0 else 2 * PD * (1 - PF) / (PD + 1 - PF)
 
 
 def parse_results(result):
@@ -243,11 +193,11 @@ def my_smote(data, num, k=5, r=1):
         k = len(data) - 1
     nbrs = NearestNeighbors(n_neighbors=k, algorithm='ball_tree', p=r).fit(data)
     distances, indices = nbrs.kneighbors(data)
-    for i in range(0, num):
+    for _ in range(num):
         mid = randint(0, len(data) - 1)
         nn = indices[mid, randint(1, k - 1)]
         datamade = []
-        for j in range(0, len(data[mid])):
+        for j in range(len(data[mid])):
             gap = random()
             datamade.append((data[nn, j] - data[mid, j]) * gap + data[mid, j])
         corpus.append(datamade)
@@ -279,49 +229,23 @@ def balance(data_train, train_label, m=0, r=0, neighbors=0):
 
 
 def rf_smotuned(m, r, neighbours):
-#    lab = [y for x in train_y.values.tolist() for y in x]
-    lab =[]
-    for x in train_y:
-        lab.append(x)
+    lab = list(train_y)
     train_balanced_x, train_balanced_y = balance(train_x, lab, m=m, r=r, neighbors=neighbours)
     rf = RandomForestClassifier()
     rf.fit(train_balanced_x, train_balanced_y)
     predictions = rf.predict(test_x)
     tn, fp, fn, tp = confusion_matrix(test_y, predictions).ravel()
-    if tp + fn == 0:
-        PD = 0.0
-    else:
-        PD = tp / (tp + fn)
-    if fp + tn == 0:
-        PF = 0.0
-    else:
-        PF = fp / (fp + tn)
-    if PD + 1 - PF == 0:
-        G_MEASURE = 0.0
-    else:
-        G_MEASURE = 2 * PD * (1 - PF) / (PD + 1 - PF)
-    return G_MEASURE
+    PD = 0.0 if tp + fn == 0 else tp / (tp + fn)
+    PF = 0.0 if fp + tn == 0 else fp / (fp + tn)
+    return 0.0 if PD + 1 - PF == 0 else 2 * PD * (1 - PF) / (PD + 1 - PF)
 def nb_smotuned(m, r, neighbours):
-#    lab = [y for x in train_y.values.tolist() for y in x]
-    lab =[]
-    for x in train_y:
-        lab.append(x)
+    lab = list(train_y)
     train_balanced_x, train_balanced_y = balance(train_x.values, lab, m=m, r=r, neighbors=neighbours)
 #    print("I'm here:")
     nb = GaussianNB()
     nb.fit(train_balanced_x, train_balanced_y)
     predictions = nb.predict(test_x)
     tn, fp, fn, tp = confusion_matrix(test_y, predictions).ravel()
-    if tp + fn == 0:
-        PD = 0.0
-    else:
-        PD = tp / (tp + fn)
-    if fp + tn == 0:
-        PF = 0.0
-    else:
-        PF = fp / (fp + tn)
-    if PD + 1 - PF == 0:
-        G_MEASURE = 0.0
-    else:
-        G_MEASURE = 2 * PD * (1 - PF) / (PD + 1 - PF)
-    return G_MEASURE
+    PD = 0.0 if tp + fn == 0 else tp / (tp + fn)
+    PF = 0.0 if fp + tn == 0 else fp / (fp + tn)
+    return 0.0 if PD + 1 - PF == 0 else 2 * PD * (1 - PF) / (PD + 1 - PF)

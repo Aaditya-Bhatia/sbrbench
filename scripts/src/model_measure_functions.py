@@ -22,26 +22,20 @@ def calc_PofB20(clf, test_content_count, test_label):
     proba_result = clf.predict_proba(test_content_count)
     # 定义了一个数据结构，为[标签0的可能性，标签1的可能性，编号]
     new_result = []
-    i = 0
-    for line in proba_result.tolist():
+    for i, line in enumerate(proba_result.tolist()):
         line.append(i)
-        i += 1
         new_result.append(line)
     # 对所有测试样本为安全性bug的可能性从大到小排序
     # key是排序规则，这里我们是用为1的可能性进行排序
     # reverse为True代表降序
     sort_new_result = sorted(new_result, key=lambda line: line[1], reverse=True)
-    # 所有含有安全性bug的编号列表
-    security_bug_list = []
-    for i in range(0, len(test_label)):
-        if test_label[i] == 1:
-            security_bug_list.append(i)
+    security_bug_list = [i for i in range(len(test_label)) if test_label[i] == 1]
     # 设置20%对应的数量
     percent_20_length = int(0.2 * len(test_label))
-    correct_number = 0
-    for i in range(0, percent_20_length):
-        if sort_new_result[i][-1] in security_bug_list:
-            correct_number += 1
+    correct_number = sum(
+        sort_new_result[i][-1] in security_bug_list
+        for i in range(percent_20_length)
+    )
     return float(correct_number / len(security_bug_list))
 
 
@@ -50,10 +44,8 @@ def calc_opt(clf, test_content_count, test_label):
     proba_result = clf.predict_proba(test_content_count)
     # 定义了一个数据结构，为[标签0的可能性，标签1的可能性，编号]
     new_result = []
-    i = 0
-    for line in proba_result.tolist():
+    for i, line in enumerate(proba_result.tolist()):
         line.append(i)
-        i += 1
         new_result.append(line)
     # 对所有测试样本为安全性bug的可能性从大到小排序
     # key是排序规则，这里我们是用为1的可能性进行排序
@@ -63,14 +55,11 @@ def calc_opt(clf, test_content_count, test_label):
     sum = 0
     # 含有的为1的总数
     security_bug_length = test_label.count(1)
-    security_bug_list = []
-    for i in range(0, len(test_label)):
-        if test_label[i] == 1:
-            security_bug_list.append(i)
+    security_bug_list = [i for i in range(len(test_label)) if test_label[i] == 1]
     # 累计的正确数
     correct_num = 0
-    for i in range(0, len(test_label)):
-        optimal = security_bug_length if (i + 1) > security_bug_length else i + 1
+    for i in range(len(test_label)):
+        optimal = min(i + 1, security_bug_length)
         correct_num += (1 if sort_new_result[i][-1] in security_bug_list else 0)
         predict = correct_num
         opt_temp = optimal - predict
@@ -87,11 +76,11 @@ def model_measure_basic(clf, test_content_count, test_label):
     for i in range(len(test_label)):
         if pred[i] == test_label[i] == 1:
             TP += 1
-        elif test_label[i] == 1 and pred[i] != test_label[i]:
+        elif test_label[i] == 1:
             FN += 1
         elif pred[i] == test_label[i] == 0:
             TN += 1
-        elif test_label[i] == 0 and pred[i] != test_label[i]:
+        elif test_label[i] == 0:
             FP += 1
     # 计算pd pf prec f_measure g_measure
     if TP + FN != 0:
@@ -120,11 +109,11 @@ def model_measure(clf, test_content_count, test_label):
     for i in range(len(test_label)):
         if pred[i] == test_label[i] == 1:
             TP += 1
-        elif test_label[i] == 1 and pred[i] != test_label[i]:
+        elif test_label[i] == 1:
             FN += 1
         elif pred[i] == test_label[i] == 0:
             TN += 1
-        elif test_label[i] == 0 and pred[i] != test_label[i]:
+        elif test_label[i] == 0:
             FP += 1
     # 计算pd pf prec f_measure g_measure
     if TP + FN != 0:
@@ -146,34 +135,28 @@ def model_measure(clf, test_content_count, test_label):
     proba_result = clf.predict_proba(test_content_count)
     # 定义了一个数据结构，为[标签0的可能性，标签1的可能性，编号]
     new_result = []
-    i = 0
-    for line in proba_result.tolist():
+    for i, line in enumerate(proba_result.tolist()):
         line.append(i)
-        i += 1
         new_result.append(line)
     # 对所有测试样本为安全性bug的可能性从大到小排序
     # key是排序规则，这里我们是用为1的可能性进行排序
     # reverse为True代表降序
     sort_new_result = sorted(new_result, key=lambda line: line[1], reverse=True)
-    # 所有含有安全性bug的编号列表
-    security_bug_list = []
-    for i in range(0, len(test_label)):
-        if test_label[i] == 1:
-            security_bug_list.append(i)
+    security_bug_list = [i for i in range(len(test_label)) if test_label[i] == 1]
     # 设置20%对应的数量
     percent_20_length = int(0.2 * len(test_label))
-    correct_number = 0
-    for i in range(0, percent_20_length):
-        if sort_new_result[i][-1] in security_bug_list:
-            correct_number += 1
+    correct_number = sum(
+        sort_new_result[i][-1] in security_bug_list
+        for i in range(percent_20_length)
+    )
     PofB20 = float(correct_number / len(security_bug_list))
 
     sum = 0
     security_bug_length = test_label.count(1)
     # 累计的正确数
     correct_num = 0
-    for i in range(0, len(test_label)):
-        optimal = security_bug_length if (i + 1) > security_bug_length else i + 1
+    for i in range(len(test_label)):
+        optimal = min(i + 1, security_bug_length)
         correct_num += (1 if sort_new_result[i][-1] in security_bug_list else 0)
         predict = correct_num
         opt_temp = optimal - predict
@@ -191,11 +174,11 @@ def model_measure_with_cross(pred, pred_proba, test_label):
     for i in range(len(test_label)):
         if pred[i] == test_label[i] == 1:
             TP += 1
-        elif test_label[i] == 1 and pred[i] != test_label[i]:
+        elif test_label[i] == 1:
             FN += 1
         elif pred[i] == test_label[i] == 0:
             TN += 1
-        elif test_label[i] == 0 and pred[i] != test_label[i]:
+        elif test_label[i] == 0:
             FP += 1
     # 计算pd pf prec f_measure g_measure
     if TP + FN != 0:
@@ -223,34 +206,28 @@ def model_measure_with_cross(pred, pred_proba, test_label):
     proba_result = pred_proba
     # 定义了一个数据结构，为[标签0的可能性，标签1的可能性，编号]
     new_result = []
-    i = 0
-    for line in proba_result.tolist():
+    for i, line in enumerate(proba_result.tolist()):
         line.append(i)
-        i += 1
         new_result.append(line)
     # 对所有测试样本为安全性bug的可能性从大到小排序
     # key是排序规则，这里我们是用为1的可能性进行排序
     # reverse为True代表降序
     sort_new_result = sorted(new_result, key=lambda line: line[1], reverse=True)
-    # 所有含有安全性bug的编号列表
-    security_bug_list = []
-    for i in range(0, len(test_label)):
-        if test_label[i] == 1:
-            security_bug_list.append(i)
+    security_bug_list = [i for i in range(len(test_label)) if test_label[i] == 1]
     # 设置20%对应的数量
     percent_20_length = int(0.2 * len(test_label))
-    correct_number = 0
-    for i in range(0, percent_20_length):
-        if sort_new_result[i][-1] in security_bug_list:
-            correct_number += 1
+    correct_number = sum(
+        sort_new_result[i][-1] in security_bug_list
+        for i in range(percent_20_length)
+    )
     PofB20 = float(correct_number / len(security_bug_list))
 
     sum = 0
     security_bug_length = len(security_bug_list)
     # 累计的正确数
     correct_num = 0
-    for i in range(0, len(test_label)):
-        optimal = security_bug_length if (i + 1) > security_bug_length else i + 1
+    for i in range(len(test_label)):
+        optimal = min(i + 1, security_bug_length)
         correct_num += (1 if sort_new_result[i][-1] in security_bug_list else 0)
         predict = correct_num
         opt_temp = optimal - predict
@@ -267,11 +244,11 @@ def model_measure_mop(pred, test_label):
     for i in range(len(test_label)):
         if pred[i] == test_label[i] == 1:
             TP += 1
-        elif test_label[i] == 1 and pred[i] != test_label[i]:
+        elif test_label[i] == 1:
             FN += 1
         elif pred[i] == test_label[i] == 0:
             TN += 1
-        elif test_label[i] == 0 and pred[i] != test_label[i]:
+        elif test_label[i] == 0:
             FP += 1
     # 计算pd pf prec f_measure g_measure
     if TP + FN != 0:

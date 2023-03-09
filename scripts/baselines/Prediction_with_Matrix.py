@@ -127,37 +127,37 @@ def prediction_with_tuning(l, train_x, train_y, test_x, test_y):
 
 
 #def main():
-output = "../output_noise/predict_with_matrix_noise_clean_rf_tuning_output.csv"     
-csv_file = open(output, "w", newline='')
-writer = csv.writer(csv_file, delimiter=',')
-writer.writerow(['Dataname','Version', 'Approach', 'TN', 'FP', 'FN', 'TP', 'pd', 'pf', 'prec', 'fmeasure', 'Gmeasure','Cost']) 
+output = "../output_noise/predict_with_matrix_noise_clean_rf_tuning_output.csv"
+with open(output, "w", newline='') as csv_file:
+    writer = csv.writer(csv_file, delimiter=',')
+    writer.writerow(['Dataname','Version', 'Approach', 'TN', 'FP', 'FN', 'TP', 'pd', 'pf', 'prec', 'fmeasure', 'Gmeasure','Cost']) 
 
-datanames = ["ambari", "camel", "derby", "wicket", "chromium"] #"ambari", "camel", "derby", "wicket", "chromium"
-classifier = "RF"
-for dataname in datanames:
+    datanames = ["ambari", "camel", "derby", "wicket", "chromium"] #"ambari", "camel", "derby", "wicket", "chromium"
+    classifier = "RF"
+    for dataname in datanames:
 #dataname = "ambari"
-    print("")
-    print("Start processing: ", dataname)
-    TRAIN_PATH_noise = r"../input/matrix/noise/" +dataname+ "-train.csv"
-    TRAIN_PATH_farsec = r"../input/matrix/farsec/" +dataname+ "-farsectwo.csv"
-    TEST_PATH_noise = r"../input/matrix/noise/" +dataname+ "-test.csv"
-    
-    TRAIN_PATH_clean = r"../input/input_matrix/clean/" +dataname+ "-farsectwo.csv"
-    TEST_PATH_clean = r"../input/matrix/clean/" +dataname+ "-test.csv"
-    
-    
-    
-    # get data
-    train_x, train_y, farsec_x, farsec_y, test_x, test_y = get_data(TRAIN_PATH_noise, TRAIN_PATH_farsec, TEST_PATH_clean)
-    ''' 
+        print("")
+        print("Start processing: ", dataname)
+        TRAIN_PATH_noise = r"../input/matrix/noise/" +dataname+ "-train.csv"
+        TRAIN_PATH_farsec = r"../input/matrix/farsec/" +dataname+ "-farsectwo.csv"
+        TEST_PATH_noise = r"../input/matrix/noise/" +dataname+ "-test.csv"
+
+        TRAIN_PATH_clean = r"../input/input_matrix/clean/" +dataname+ "-farsectwo.csv"
+        TEST_PATH_clean = r"../input/matrix/clean/" +dataname+ "-test.csv"
+
+
+
+        # get data
+        train_x, train_y, farsec_x, farsec_y, test_x, test_y = get_data(TRAIN_PATH_noise, TRAIN_PATH_farsec, TEST_PATH_clean)
+        ''' 
     Train with noise data
     '''
 #    #normal prediction    
 #    TN, FP, FN, TP, Recall, pf, PREC, F_MEASURE, G_MEASURE, Cost = predict(classifier, train_x, train_y, test_x, test_y)
 #    writer.writerow([dataname,'Noise', classifier, TN, FP, FN, TP, Recall, pf, PREC, F_MEASURE, G_MEASURE, Cost])
 #    print(dataname,'Noise', classifier, TN, FP, FN, TP, Recall, pf, PREC, F_MEASURE, G_MEASURE, Cost)
-    #
-    ##Prediction with learning tuning
+        #
+        ##Prediction with learning tuning
 #    TN, FP, FN, TP, Recall, pf, PREC, F_MEASURE, G_MEASURE, Cost = prediction_with_tuning(classifier, train_x, train_y, test_x, test_y)
 #    writer.writerow([dataname,'Noise', 'RF_Tuning', TN, FP, FN, TP, Recall, pf, PREC, F_MEASURE, G_MEASURE, Cost]) 
 #    print(dataname,'Noise', 'RF_Tuning', TN, FP, FN, TP, Recall, pf, PREC, F_MEASURE, G_MEASURE, Cost)
@@ -166,47 +166,29 @@ for dataname in datanames:
 #    TN, FP, FN, TP, Recall, pf, PREC, F_MEASURE, G_MEASURE, Cost = prediciton_with_smounted(TRAIN_PATH_noise, TEST_PATH_noise)
 #    writer.writerow([dataname,'Noise', 'Smounted', TN, FP, FN, TP, Recall, pf, PREC, F_MEASURE, G_MEASURE, Cost])     
 #    print(dataname,'Noise', 'Smounted', TN, FP, FN, TP, Recall, pf, PREC, F_MEASURE, G_MEASURE, Cost)    
-    
-    
-    ''' 
+
+
+        ''' 
     Train with farsec data
     '''
-    #normal prediction    
-    TN, FP, FN, TP, Recall, pf, PREC, F_MEASURE, G_MEASURE, Cost = predict(classifier, farsec_x, farsec_y, test_x, test_y)
-    writer.writerow([dataname,'farsectwo', classifier, TN, FP, FN, TP, Recall, pf, PREC, F_MEASURE, G_MEASURE, Cost])
-    print(dataname,'farsectwo', classifier, TN, FP, FN, TP, Recall, pf, PREC, F_MEASURE, G_MEASURE, Cost)
-    
-#    Prediction with learning tuning
-    TN, FP, FN, TP, Recall, pf, PREC, F_MEASURE, G_MEASURE, Cost = prediction_with_tuning(classifier, farsec_x, farsec_y, test_x, test_y)
-    writer.writerow([dataname,'farsectwo', 'RF_Tuning', TN, FP, FN, TP, Recall, pf, PREC, F_MEASURE, G_MEASURE, Cost]) 
-    print(dataname,'farsectwo', 'RF', TN, FP, FN, TP, Recall, pf, PREC, F_MEASURE, G_MEASURE, Cost)
-    
-    #prediction with smounted
-    TN, FP, FN, TP, Recall, pf, PREC, F_MEASURE, G_MEASURE, Cost = prediciton_with_smounted(TRAIN_PATH_farsec, TEST_PATH_clean)
-    writer.writerow([dataname,'farsectwo', 'Smounted', TN, FP, FN, TP, Recall, pf, PREC, F_MEASURE, G_MEASURE, Cost])     
-    print(dataname,'farsectwo', 'Smounted', TN, FP, FN, TP, Recall, pf, PREC, F_MEASURE, G_MEASURE, Cost)  
-    
-    
-    '''Train with clean data '''
-#    train_clean_x, train_clean_y, test_clean_x, test_clean_y = get_data_clean(TRAIN_PATH_farsec, TEST_PATH_clean)   
-#    
-#    normal prediction    
-#    TN, FP, FN, TP, Recall, pf, PREC, F_MEASURE, G_MEASURE, Cost = predict(classifier, train_clean_x, train_clean_y, test_clean_x, test_clean_y)
-#    writer.writerow([dataname,'Clean', 'RF', TN, FP, FN, TP, Recall, pf, PREC, F_MEASURE, G_MEASURE, Cost])
-#    print(dataname,'Clean', 'RF', TN, FP, FN, TP, Recall, pf, PREC, F_MEASURE, G_MEASURE, Cost)
-#    
-    #Prediction with learning tuning
-#    TN, FP, FN, TP, Recall, pf, PREC, F_MEASURE, G_MEASURE, Cost = prediction_with_tuning(classifier, train_clean_x, train_clean_y, test_clean_x, test_clean_y)
-#    writer.writerow([dataname,'Clean', 'RF_Tuning', TN, FP, FN, TP, Recall, pf, PREC, F_MEASURE, G_MEASURE, Cost]) 
-#    print(dataname,'Clean', 'RF', TN, FP, FN, TP, Recall, pf, PREC, F_MEASURE, G_MEASURE, Cost)
-#    
-##    #prediction with smounted
-#    TN, FP, FN, TP, Recall, pf, PREC, F_MEASURE, G_MEASURE, Cost = prediciton_with_smounted(TRAIN_PATH_clean, TEST_PATH_clean)
-#    writer.writerow([dataname,'Clean', 'Smounted', TN, FP, FN, TP, Recall, pf, PREC, F_MEASURE, G_MEASURE, Cost])     
-#    print(dataname,'Clean', 'Smounted', TN, FP, FN, TP, Recall, pf, PREC, F_MEASURE, G_MEASURE, Cost)    
+        #normal prediction    
+        TN, FP, FN, TP, Recall, pf, PREC, F_MEASURE, G_MEASURE, Cost = predict(classifier, farsec_x, farsec_y, test_x, test_y)
+        writer.writerow([dataname,'farsectwo', classifier, TN, FP, FN, TP, Recall, pf, PREC, F_MEASURE, G_MEASURE, Cost])
+        print(dataname,'farsectwo', classifier, TN, FP, FN, TP, Recall, pf, PREC, F_MEASURE, G_MEASURE, Cost)
 
-csv_file.close()
-print(output + '**************** finished************************')
+#    Prediction with learning tuning
+        TN, FP, FN, TP, Recall, pf, PREC, F_MEASURE, G_MEASURE, Cost = prediction_with_tuning(classifier, farsec_x, farsec_y, test_x, test_y)
+        writer.writerow([dataname,'farsectwo', 'RF_Tuning', TN, FP, FN, TP, Recall, pf, PREC, F_MEASURE, G_MEASURE, Cost]) 
+        print(dataname,'farsectwo', 'RF', TN, FP, FN, TP, Recall, pf, PREC, F_MEASURE, G_MEASURE, Cost)
+
+        #prediction with smounted
+        TN, FP, FN, TP, Recall, pf, PREC, F_MEASURE, G_MEASURE, Cost = prediciton_with_smounted(TRAIN_PATH_farsec, TEST_PATH_clean)
+        writer.writerow([dataname,'farsectwo', 'Smounted', TN, FP, FN, TP, Recall, pf, PREC, F_MEASURE, G_MEASURE, Cost])     
+        print(dataname,'farsectwo', 'Smounted', TN, FP, FN, TP, Recall, pf, PREC, F_MEASURE, G_MEASURE, Cost)  
+
+
+        '''Train with clean data '''
+print(f'{output}**************** finished************************')
 
 #if __name__ == "__main__":
 #    main()

@@ -152,8 +152,8 @@ def prediciton_with_smounted(l, train_dataset_path, test_dataset_path):
 def main():
     
     dataname = "Ambari"
-    TRAIN_PATH = r"../input/matrix_new/" +dataname + "_train.csv"
-    TEST_PATH = r"../input/matrix_new/" +dataname + "_test.csv"
+    TRAIN_PATH = f"../input/matrix_new/{dataname}_train.csv"
+    TEST_PATH = f"../input/matrix_new/{dataname}_test.csv"
     prediciton_with_smounted("NB",TRAIN_PATH, TEST_PATH)
 
 

@@ -9,8 +9,7 @@ from sklearn.svm import LinearSVC
 def selectFromLinearSVC(data, label):
     lsvc = LinearSVC(C=0.3, dual=False, penalty='l1').fit(data, label)  # , dual=False  plants 
     model = SelectFromModel(lsvc, prefit=True)
-    new_data = model.transform(data)
-    return new_data
+    return model.transform(data)
 def selectFromLinearSVC3(train_content, train_label, test_content, left_content):
     lsvc = LinearSVC(C=0.3, dual=False, penalty='l1').fit(train_content,train_label)  # , dual=False  plants 
     model = SelectFromModel(lsvc, prefit=True)

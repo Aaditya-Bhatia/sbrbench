@@ -241,22 +241,21 @@ def prediction(dataset_path_n, dataset_path_c, writer):
 
 
 def main():
-    output = "../output_noise/predict_with_text_5_lner_simple_output.csv"     
-    csv_file = open(output, "w", newline='')
-    writer = csv.writer(csv_file, delimiter=',')
-    writer.writerow(['Dataname','Version', 'Approach', 'TN', 'FP', 'FN', 'TP', 'pd', 'pf', 'prec', 'fmeasure', 'Gmeasure','Cost']) 
+    output = "../output_noise/predict_with_text_5_lner_simple_output.csv"
+    with open(output, "w", newline='') as csv_file:
+        writer = csv.writer(csv_file, delimiter=',')
+        writer.writerow(['Dataname','Version', 'Approach', 'TN', 'FP', 'FN', 'TP', 'pd', 'pf', 'prec', 'fmeasure', 'Gmeasure','Cost']) 
 
-    datanames = ["chromium","ambari", "camel", "derby", "wicket"] #"ambari", "camel", "derby", "wicket", "chromium"
-    for dataname in datanames:
-        print("Start data: ", dataname)
-        DATA_PATH_NOISE = r"../input/noise/" +dataname + ".csv"
-        DATA_PATH_CLEAN = r"../input/clean/" +dataname + ".csv"
+        datanames = ["chromium","ambari", "camel", "derby", "wicket"] #"ambari", "camel", "derby", "wicket", "chromium"
+        for dataname in datanames:
+            print("Start data: ", dataname)
+            DATA_PATH_NOISE = r"../input/noise/" +dataname + ".csv"
+            DATA_PATH_CLEAN = r"../input/clean/" +dataname + ".csv"
 #        prediction(DATA_PATH_NOISE, writer)
 #        print("")
-        prediction(DATA_PATH_NOISE, DATA_PATH_CLEAN, writer)
-        print("")
-    csv_file.close()
-    print(output + '**************** finished************************')
+            prediction(DATA_PATH_NOISE, DATA_PATH_CLEAN, writer)
+            print("")
+    print(f'{output}**************** finished************************')
 
 if __name__ == "__main__":
     main()
